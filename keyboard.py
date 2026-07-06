@@ -14,3 +14,9 @@ menu.add(
     InlineKeyboardButton("Владелец", url="https://t.me/aIt_hub"),
     InlineKeyboardButton("Депка", url="https://t.me/ryaldum")
 )
+
+# init start menu for /start command
+start_menu = InlineKeyboardMarkup(row_width=1)
+start_menu.add(
+    InlineKeyboardButton("Исходный код (GitHub)", url="https://github.com/damnurmum/default_chatbot")
+)

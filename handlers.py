@@ -4,7 +4,8 @@ from telebot.util import content_type_media
 # import vars from local libs
 from bot_instance import bot
 from config import CHAT, CHANNEL, ADMIN, POST_SIGN
-from keyboard import menu
+from config import start_command_text, test_command_text
+from keyboard import menu, start_menu
 from state import is_media_group_processed, set_post_sign, get_post_sign
 
 # gen text for comment
@@ -18,13 +19,18 @@ def text_for_comment(admin_sign: str | None) -> str:
     )
     return result
 
-# test command
+# /start command
 @bot.message_handler(commands=["start"])
 def handler_start(message):
+    bot.reply_to(message, start_command_text, reply_markup=start_menu, parse_mode="HTML")
+
+# /test command
+@bot.message_handler(commands=["test"])
+def handler_test(message):
     if message.chat.id != ADMIN:
         return
 
-    bot.reply_to(message, "im working.", reply_markup=menu)
+    bot.reply_to(message, test_command_text, reply_markup=menu)
 
 
 # edit channel post
