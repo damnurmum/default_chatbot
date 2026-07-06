@@ -20,3 +20,8 @@ start_menu = InlineKeyboardMarkup(row_width=1)
 start_menu.add(
     InlineKeyboardButton("Исходный код (GitHub)", url="https://github.com/damnurmum/default_chatbot")
 )
+start_menu.row_width = 2
+start_menu.add(
+    InlineKeyboardButton("Канал", url="https://t.me/ely4plugg"),
+    InlineKeyboardButton("Чат", url="https://t.me/+LNYVSiGEVcJlMDFi")
+)
