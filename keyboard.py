@@ -1,6 +1,8 @@
+# import markup and button for menu from telebot
 from telebot.types import InlineKeyboardMarkup
 from telebot.types import InlineKeyboardButton
 
+# init menu for comment
 menu = InlineKeyboardMarkup(row_width=3)
 menu.add(
     InlineKeyboardButton("ПРЕДЛОЖКА", url="http://t.me/ely4plugg?direct"),

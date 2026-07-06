@@ -1,11 +1,13 @@
+# import content type from telebot
 from telebot.util import content_type_media
 
+# import vars from local libs
 from bot_instance import bot
 from config import CHAT, CHANNEL, ADMIN, POST_SIGN
 from keyboard import menu
 from state import is_media_group_processed, set_post_sign, get_post_sign
 
-
+# gen text for comment
 def text_for_comment(admin_sign: str | None) -> str:
     if admin_sign is None:
         admin_sign = "АНОНИМ"
@@ -16,14 +18,13 @@ def text_for_comment(admin_sign: str | None) -> str:
     )
     return result
 
-
 # test command
 @bot.message_handler(commands=["start"])
 def handler_start(message):
     if message.chat.id != ADMIN:
         return
 
-    bot.reply_to(message, str(message.from_user.id), reply_markup=menu)
+    bot.reply_to(message, "im working.", reply_markup=menu)
 
 
 # edit channel post
