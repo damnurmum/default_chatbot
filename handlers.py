@@ -22,15 +22,8 @@ def text_for_comment(admin_sign: str | None) -> str:
 # /start command
 @bot.message_handler(commands=["start"])
 def handler_start(message):
-    bot.reply_to(message, start_command_text, reply_markup=start_menu, parse_mode="HTML", disable_web_page_preview=True)
-
-# /test command
-@bot.message_handler(commands=["test"])
-def handler_test(message):
-    if message.chat.id != ADMIN:
-        return
-
-    bot.reply_to(message, test_command_text, reply_markup=menu)
+    bot.send_sticker(message.chat.id, "CAACAgIAAxkBAANMakwIyn3z9lgPJBzfS_N9rhl0DIUAAuxSAAKOU2hJqpQ21X6uixg8BA", reply_to_message_id=message.id)
+    bot.send_message(message.chat.id, start_command_text, reply_markup=start_menu, parse_mode="HTML", disable_web_page_preview=True)
 
 # edit channel post
 @bot.channel_post_handler(content_types=['text', 'photo', 'video', 'document', 'audio', 'animation', 'voice'])
