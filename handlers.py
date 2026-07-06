@@ -22,7 +22,7 @@ def text_for_comment(admin_sign: str | None) -> str:
 # /start command
 @bot.message_handler(commands=["start"])
 def handler_start(message):
-    bot.reply_to(message, start_command_text, reply_markup=start_menu, parse_mode="HTML")
+    bot.reply_to(message, start_command_text, reply_markup=start_menu, parse_mode="HTML", disable_web_page_preview=True)
 
 # /test command
 @bot.message_handler(commands=["test"])

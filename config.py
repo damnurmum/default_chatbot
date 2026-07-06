@@ -15,6 +15,8 @@ start_command_text="""
 Если ты сам захотел посмотреть на то, из чего я сделан - загляни на GitHub по кнопке ниже.
 
 Спасибо, удачи!
+
+by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
 """
 test_command_text="bot is working."
 
