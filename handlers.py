@@ -32,7 +32,6 @@ def handler_test(message):
 
     bot.reply_to(message, test_command_text, reply_markup=menu)
 
-
 # edit channel post
 @bot.channel_post_handler(content_types=['text', 'photo', 'video', 'document', 'audio', 'animation', 'voice'])
 def handler_channel_post(message):
@@ -62,7 +61,6 @@ def handler_channel_post(message):
             )
     else:
         bot.edit_message_caption(POST_SIGN, message.chat.id, message.id, parse_mode="HTML")
-
 
 # auto unpin and reply in discussion chat, dedup albums
 @bot.message_handler(content_types=content_type_media)
