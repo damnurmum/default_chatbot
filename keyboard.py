@@ -11,8 +11,7 @@ menu.add(
 )
 menu.row_width = 2
 menu.add(
-    InlineKeyboardButton("Владелец", url="https://t.me/aIt_hub"),
-    InlineKeyboardButton("Депка", url="https://t.me/ryaldum")
+    InlineKeyboardButton("Владелец", url="https://t.me/ryaldum")
 )
 
 # init start menu for /start command
