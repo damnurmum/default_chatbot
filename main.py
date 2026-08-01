@@ -30,8 +30,7 @@ with open("media_ids.json", "r+") as file:
         file.seek(0)
         dump(media_ids_json, file, indent=4)
         file.truncate()
-
-    bot.send_message(ADMIN, "SUCCESS! Now bot is starting...")
+        bot.send_message(ADMIN, "Success! Now bot is starting...")
 
 # start bot
 if __name__ == "__main__":
