@@ -6,7 +6,7 @@ import os
 POST_SIGN = "by <a href=\"https://t.me/ely4plugg\">ELY4PLUGG</a>."
 
 # init some texts for messages
-start_command_text="""
+START_COMMAND_TEXT="""
 Привет! Я - @default_chatbot. Бот, который создан для автоматизации <a href="https://t.me/ely4plugg">канала</a> и связанного с ним <a href="https://t.me/+LNYVSiGEVcJlMDFi">чата</a> обсуждений.
 
 Буквально читаю тебе свои умения с репозитория...
@@ -16,9 +16,16 @@ start_command_text="""
 
 Спасибо, удачи!
 
-by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
+<tg-emoji emoji-id=\"5427344232568368005\">👺</tg-emoji> by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
 """
-test_command_text="bot is working."
+
+# custom emoji
+START_COMMAND_CUSTOM_EMOJI_MENU = True # only for bot owner with tg prem
+COMMENT_CUSTOM_EMOJI_MENU = True # only for bot owner with tg prem
+
+# gifs
+START_COMMAND_GIF = "CgACAgEAAxkDAANoam3X1r4VacSKMu5lpOlGj0GYTDEAAnMHAAJL-WhHeoLyFjVpfZ89BA"
+COMMENT_GIF = "CgACAgEAAxkDAAOEam3ev80w2XW_AYvaxjKSxV-I2TcAAmwJAALrinFH4pjamJdodog9BA"
 
 # load .env
 load_dotenv()

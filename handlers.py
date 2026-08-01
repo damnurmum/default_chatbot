@@ -3,8 +3,13 @@ from telebot.util import content_type_media
 
 # import vars from local libs
 from bot_instance import bot
-from config import CHAT, CHANNEL, ADMIN, POST_SIGN
-from config import start_command_text, test_command_text
+
+# config vars
+from config import CHAT, CHANNEL, POST_SIGN
+from config import COMMENT_GIF, START_COMMAND_GIF
+from config import START_COMMAND_TEXT
+
+# other
 from keyboard import menu, start_menu
 from state import is_media_group_processed, set_post_sign, get_post_sign
 
@@ -22,8 +27,7 @@ def text_for_comment(admin_sign: str | None) -> str:
 # /start command
 @bot.message_handler(commands=["start"])
 def handler_start(message):
-    bot.send_sticker(message.chat.id, "CAACAgIAAxkBAANMakwIyn3z9lgPJBzfS_N9rhl0DIUAAuxSAAKOU2hJqpQ21X6uixg8BA", reply_to_message_id=message.id)
-    bot.send_message(message.chat.id, start_command_text, reply_markup=start_menu, parse_mode="HTML", disable_web_page_preview=True)
+    bot.send_animation(message.chat.id, START_COMMAND_GIF, caption=START_COMMAND_TEXT, reply_markup=start_menu, parse_mode="HTML")
 
 # edit channel post
 @bot.channel_post_handler(content_types=['text', 'photo', 'video', 'document', 'audio', 'animation', 'voice'])
@@ -75,5 +79,5 @@ def handler_send_message(message):
 
     sign = get_post_sign(message.forward_from_message_id)
 
-    bot.reply_to(message, text_for_comment(sign), reply_markup=menu)
+    bot.send_animation(message.chat.id, COMMENT_GIF, caption=text_for_comment(sign), reply_markup=menu, reply_to_message_id=message.id)
     bot.unpin_chat_message(CHAT, message.id)
