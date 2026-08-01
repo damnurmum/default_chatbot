@@ -1,6 +1,7 @@
 # import main libs
 from dotenv import load_dotenv
-import os
+from os import getenv
+from json import load
 
 # init post sign
 POST_SIGN = "by <a href=\"https://t.me/ely4plugg\">ELY4PLUGG</a>."
@@ -24,15 +25,16 @@ START_COMMAND_CUSTOM_EMOJI_MENU = True # only for bot owner with tg prem
 COMMENT_CUSTOM_EMOJI_MENU = True # only for bot owner with tg prem
 
 # gifs
-START_COMMAND_GIF = "CgACAgEAAxkDAANoam3X1r4VacSKMu5lpOlGj0GYTDEAAnMHAAJL-WhHeoLyFjVpfZ89BA"
-COMMENT_GIF = "CgACAgEAAxkDAAOEam3ev80w2XW_AYvaxjKSxV-I2TcAAmwJAALrinFH4pjamJdodog9BA"
+media_files = load(open("media_ids.json", "r"))
+START_COMMAND_GIF = media_files["START_COMMAND_GIF"]
+COMMENT_GIF = media_files["COMMENT_GIF"]
 
 # load .env
 load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT = os.getenv("CHAT")
-CHANNEL = os.getenv("CHANNEL")
-ADMIN = os.getenv("ADMIN")
+BOT_TOKEN = getenv("BOT_TOKEN")
+CHAT = getenv("CHAT")
+CHANNEL = getenv("CHANNEL")
+ADMIN = getenv("ADMIN")
 
 # check .env vars
 required = {
