@@ -19,7 +19,6 @@ Telegram-бот для автоматизации канала и связанн
 - Python 3
 - [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) (`telebot`)
 - `python-dotenv`
-- `PySocks` - для warp соединения
 
 ## Структура проекта
 
@@ -32,7 +31,9 @@ Telegram-бот для автоматизации канала и связанн
 ├── handlers.py            # все обработчики сообщений и постов
 ├── keyboard.py             # инлайн-клавиатура с кнопками-ссылками
 ├── requirements.txt         # зависимости проекта
-└── .github/workflows/        # автодеплой на сервер при пуше в main
+├── media_ids.json            # id медиа файлов (создается при 1-м запуске)
+├── resources/*                # ресурсы бота (GIF изображения)
+└── .github/workflows/          # автодеплой на сервер при пуше в main
 ```
 
 ## Установка и запуск
