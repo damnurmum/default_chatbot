@@ -1,26 +1,26 @@
-# import markup and button for menu from telebot
+# buttons and layouts - the visual drip
 from telebot.types import InlineKeyboardMarkup
 from telebot.types import InlineKeyboardButton
 
-# vars for boolen func
+# emoji switches from the config
 from config import START_COMMAND_CUSTOM_EMOJI_MENU
 from config import COMMENT_CUSTOM_EMOJI_MENU
 
-# enable/disable custom emoji in start menu
+# toggle premium emoji in the start menu
 def start_command_custom_emoji_menu_func(emoji_id: str):
     if START_COMMAND_CUSTOM_EMOJI_MENU:
         return emoji_id
     else:
         return None
 
-# enable/disable custom emoji in comment menu
+# toggle premium emoji under channel posts
 def comment_custom_emoji_menu_func(emoji_id: str):
     if COMMENT_CUSTOM_EMOJI_MENU:
         return emoji_id
     else:
         return None
 
-# init menu for comment
+# build the comment menu
 menu = InlineKeyboardMarkup(row_width=1)
 menu.add(
     InlineKeyboardButton("ПРЕДЛОЖКА", url="http://t.me/ely4plugg?direct", icon_custom_emoji_id=comment_custom_emoji_menu_func("5431471910888188907")),
@@ -35,7 +35,7 @@ menu.add(
     InlineKeyboardButton("Владелец", url="https://t.me/ryaldum", icon_custom_emoji_id=comment_custom_emoji_menu_func("5397655168055544411"))
 )
 
-# init start menu for /start command
+# build the /start menu
 start_menu = InlineKeyboardMarkup(row_width=1)
 start_menu.add(
     InlineKeyboardButton("Исходный код (GitHub)", url="https://github.com/damnurmum/default_chatbot", icon_custom_emoji_id=start_command_custom_emoji_menu_func("5431720954566844875"))
