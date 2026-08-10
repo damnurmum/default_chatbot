@@ -6,3 +6,5 @@ EOF
 .DS_Store
 media_ids.json
 tests/
+deletion_audit.session*
+deletion_audit_state.json

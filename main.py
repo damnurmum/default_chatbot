@@ -71,5 +71,10 @@ if __name__ == "__main__":
 
     import handlers  # importing them registers every handler - tiny py magic
 
+    # MTProto watcher runs beside TeleBot and catches deleted channel posts
+    from mtproto_audit import start_deletion_audit
+
+    start_deletion_audit()
+
     # listen only to updates we actually use; less noise, more speed
     bot.infinity_polling(allowed_updates=ALLOWED_UPDATES)

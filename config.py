@@ -10,6 +10,10 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent
 MEDIA_IDS_PATH = BASE_DIR / "media_ids.json"
 
+# MTProto session and checkpoint files stay beside the bot code
+DELETION_AUDIT_SESSION_PATH = BASE_DIR / "deletion_audit.session"
+DELETION_AUDIT_STATE_PATH = BASE_DIR / "deletion_audit_state.json"
+
 # post signature template; [SIGN_ADMIN] is where the artist signs
 POST_SIGN = (
     "by <b>[SIGN_ADMIN]</b> / "
@@ -59,6 +63,10 @@ CHANNEL = getenv("CHANNEL")
 ADMIN = getenv("ADMIN")
 LOG_CHAT = getenv("LOG_CHAT")
 
+# optional MTProto credentials unlock deleted post audit
+API_ID_RAW = getenv("API_ID")
+API_HASH = getenv("API_HASH")
+
 # fail fast when the setup is missing something important
 # the full setup checklist - every key must be present
 required = {
@@ -72,6 +80,12 @@ required = {
 missing = [name for name, value in required.items() if value is None]
 if missing:
     raise RuntimeError(f"no vars: {', '.join(missing)}")
+
+# API ID becomes an integer only when MTProto audit is configured
+try:
+    API_ID = int(API_ID_RAW) if API_ID_RAW else None
+except ValueError as error:
+    raise RuntimeError("API_ID must be an integer") from error
 
 # tg ids are numbers, so keep them that way
 CHAT = int(CHAT)
