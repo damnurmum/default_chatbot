@@ -5,3 +5,4 @@ __pycache__/
 EOF
 .DS_Store
 media_ids.json
+tests/
