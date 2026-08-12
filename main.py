@@ -69,7 +69,9 @@ if __name__ == "__main__":
     config.START_COMMAND_GIF = initialized_media["START_COMMAND_GIF"]
     config.COMMENT_GIF = initialized_media["COMMENT_GIF"]
 
-    import handlers  # importing them registers every handler - tiny py magic
+    # audit goes first so new posts can continue into the signing handler
+    import audit_handlers  # noqa: F401
+    import handlers  # noqa: F401
 
     # MTProto watcher runs beside TeleBot and catches deleted channel posts
     from mtproto_audit import start_deletion_audit
