@@ -70,13 +70,12 @@ if __name__ == "__main__":
     config.COMMENT_GIF = initialized_media["COMMENT_GIF"]
 
     # audit goes first so new posts can continue into the signing handler
-    import audit_handlers  # noqa: F401
+    if config.AUDIT_FOR_LOG_CHAT: import audit_handlers  # noqa: F401
     import handlers  # noqa: F401
 
     # MTProto watcher runs beside TeleBot and catches deleted channel posts
-    from mtproto_audit import start_deletion_audit
 
-    start_deletion_audit()
+    if config.AUDIT_FOR_LOG_CHAT and config.DELETION_AUDIT_MTPROTO: from mtproto_audit import start_deletion_audit; start_deletion_audit()
 
     # listen only to updates we actually use; less noise, more speed
     bot.infinity_polling(allowed_updates=ALLOWED_UPDATES)

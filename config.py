@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent
 MEDIA_IDS_PATH = BASE_DIR / "media_ids.json"
 
 # MTProto session and checkpoint files stay beside the bot code
+DELETION_AUDIT_MTPROTO = False
 DELETION_AUDIT_SESSION_PATH = BASE_DIR / "deletion_audit.session"
 DELETION_AUDIT_STATE_PATH = BASE_DIR / "deletion_audit_state.json"
 
@@ -19,6 +20,9 @@ POST_SIGN = (
     "by <b>[SIGN_ADMIN]</b> / "
     "<a href=\"https://t.me/ely4plugg\">it's ely4plugg</a>"
 )
+
+# enable/disable tg channel audit for log chat
+AUDIT_FOR_LOG_CHAT = True
 
 # words shown when someone hits /start
 START_COMMAND_TEXT = """
