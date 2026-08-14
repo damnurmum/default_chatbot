@@ -207,24 +207,6 @@ def audit_message_reaction(update):
     )
 
 
-# anonymous reaction handler - numbers move, audit notices
-@bot.message_reaction_count_handler(func=lambda update: update.chat.id == CHANNEL)
-def audit_message_reaction_count(update):
-    # compact counter snapshot for every anonymous reaction type
-    reactions = ", ".join(
-        f"{_reaction_name(reaction.type)} x{reaction.total_count}"
-        for reaction in update.reactions
-    ) or "none"
-    _send_audit(
-        "anonymous reactions just moved",
-        [
-            ("count", reactions),
-            ("link", _post_link(update)),
-            ("at", _format_time(getattr(update, "date", None))),
-        ],
-    )
-
-
 # member audit builder - shared by users and the bot itself
 def _audit_member_update(update, title: str) -> None:
     # before and after snapshots straight from Telegram
