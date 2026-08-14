@@ -18,9 +18,10 @@ Telegram-бот для автоматизации канала и связанн
 
 ## Стек
 
-- Python 3
-- [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) (`telebot`)
-- `python-dotenv`
+- [Python 3.10.12](https://www.python.org/downloads/release/python-31012/)
+- `pyTelegramBotAPI>=4.33,<5`
+- `python-dotenv>=1,<2`
+- `Telethon>=1.44,<2`
 
 ## Структура проекта
 
