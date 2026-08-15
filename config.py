@@ -15,10 +15,10 @@ DELETION_AUDIT_MTPROTO = False
 DELETION_AUDIT_SESSION_PATH = BASE_DIR / "deletion_audit.session"
 DELETION_AUDIT_STATE_PATH = BASE_DIR / "deletion_audit_state.json"
 
-# post signature template; [SIGN_ADMIN] is where the artist signs
+# post signature template;
+# placeholders: [SIGN_ADMIN] is where the artist signs
 POST_SIGN = (
-    "by <b>[SIGN_ADMIN]</b> / "
-    "<a href=\"https://t.me/ely4plugg\">it's ely4plugg</a>"
+    "<a href=\"https://t.me/ely4plugg\">косим под эляплагг</a>"
 )
 
 # enable/disable tg channel audit for log chat
