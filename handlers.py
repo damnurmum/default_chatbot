@@ -3,6 +3,8 @@ from html import escape
 
 # grab every discussion content type without writing a whole novel
 from telebot.util import content_type_media
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+import re
 
 # our local bot engine
 from bot_instance import bot
@@ -10,10 +12,10 @@ from bot_instance import bot
 # channel settings and media IDs - the secret sauce
 from config import CHAT, CHANNEL, POST_SIGN
 from config import COMMENT_GIF, START_COMMAND_GIF
-from config import START_COMMAND_TEXT
+from config import START_COMMAND_TEXT, ADMIN
 
 # keyboards and tiny in-memory brain
-from keyboard import menu, start_menu
+from keyboard import menu, start_menu, admin_menu
 from state import is_media_group_processed, set_post_sign, get_post_sign
 
 
@@ -30,6 +32,11 @@ SIGNABLE_CONTENT_TYPES = [
     "animation",
     "voice",
 ]
+
+# for admin panel: post parse with buttons
+BUTTONS_BLOCK_RE = re.compile(r'\[BUTTONS\s+RAW=(\d+)\](.*?)\[/BUTTONS\]', re.DOTALL)
+BTN_RE = re.compile(r'\[BTN\s+LINK="([^"]+)"\](.*?)\[/BTN\]', re.DOTALL)
+pending_posts = {}  # admin_chat_id -> {"from_chat_id": int, "message_id": int, "markup": InlineKeyboardMarkup | None}
 
 
 # footer builder - safe HTML goes in, clean signature comes out
@@ -66,6 +73,131 @@ def handler_start(message):
         reply_markup=start_menu,
         parse_mode="HTML",
     )
+
+
+# /admin handler - admin panel with buttons
+@bot.message_handler(commands=["admin"])
+def handler_admin(message):
+    if message.from_user.id != ADMIN: return
+    if message.chat.id != ADMIN: return
+
+    bot.send_message(message.chat.id, "Админ-панель. Используйте кнопки ниже для навигации.", reply_markup=admin_menu)
+
+# callback query handler for buttons
+@bot.callback_query_handler(func=lambda callback: True)
+def admin_menu_post_buttons_cb(call):
+    if call.data == "admin_menu_post_buttons":
+        bot.answer_callback_query(call.id, text="...")
+        bot.clear_step_handler_by_chat_id(call.message.chat.id)
+
+        bot_msg = bot.edit_message_text(
+            "Перешлите или отправьте пост (текст/медиа с подписью):",
+            call.message.chat.id, call.message.id,
+            reply_markup=None
+        )
+        bot.register_next_step_handler(bot_msg, admin_menu_post_content_step, bot_msg)
+
+    elif call.data == "admin_menu_post_buttons_send":
+        chat_id = call.message.chat.id
+        draft = pending_posts.pop(chat_id, None)
+
+        if draft is None:
+            bot.answer_callback_query(call.id, text="Черновик не найден, начните заново", show_alert=True)
+            return
+
+        bot.copy_message(
+            CHANNEL,
+            from_chat_id=draft["from_chat_id"],
+            message_id=draft["message_id"],
+            reply_markup=draft["markup"]
+        )
+
+        bot.answer_callback_query(call.id, text="Опубликовано!")
+        bot.send_message(chat_id, "Пост отправлен в канал!")
+
+    elif call.data == "admin_menu_post_buttons_skip":
+        chat_id = call.message.chat.id
+        draft = pending_posts.get(chat_id)
+
+        if draft is None:
+            bot.answer_callback_query(call.id, text="Черновик не найден, начните заново", show_alert=True)
+            return
+
+        draft["markup"] = None
+        show_send_confirmation(chat_id, call.message.id, draft)
+
+# post with buttons: wait text for posting
+def admin_menu_post_content_step(message, bot_msg):
+    chat_id = bot_msg.chat.id
+
+    pending_posts[chat_id] = {
+        "from_chat_id": message.chat.id,
+        "message_id": message.message_id,
+        "markup": None,
+    }
+
+    example = '[BUTTONS RAW=1][BTN LINK="https://t.me/durov"]ME[/BTN][/BUTTONS][BUTTONS RAW=2][BTN LINK="https://t.me/durov"]FRIEND 1[/BTN][BTN LINK="https://t.me/durov"]FRIEND 2[/BTN][/BUTTONS]'
+
+    skip_markup = InlineKeyboardMarkup()
+    skip_markup.row(InlineKeyboardButton("Без кнопок", callback_data="admin_menu_post_buttons_skip"))
+
+    bot_msg2 = bot.send_message(
+        chat_id,
+        f"Пост принят. Теперь отправьте разметку кнопок или нажмите \"Без кнопок\".\n\nПример...\n```\n{example}```",
+        reply_markup=skip_markup,
+        parse_mode="Markdown"
+    )
+    bot.register_next_step_handler(bot_msg2, admin_menu_post_buttons_step, chat_id)
+
+# post with buttons: preview text with buttons, button "send", part #1
+def admin_menu_post_buttons_step(message, chat_id):
+    buttons_text = message.text
+    markup = parse_buttons_only(buttons_text)
+
+    if markup is None:
+        bot.send_message(chat_id, "Не удалось распознать разметку кнопок, попробуйте ещё раз или нажмите \"Без кнопок\".")
+        return
+
+    draft = pending_posts[chat_id]
+    draft["markup"] = markup
+
+    show_send_confirmation(chat_id, None, draft)
+
+# post with buttons: preview text with buttons, button "send", part #2
+def show_send_confirmation(chat_id, message_id, draft):
+    preview_markup = InlineKeyboardMarkup(row_width=1)
+    if draft["markup"] is not None:
+        for row in draft["markup"].keyboard:
+            preview_markup.row(*row)
+    preview_markup.row(InlineKeyboardButton("ОТПРАВИТЬ", callback_data="admin_menu_post_buttons_send"))
+
+    bot.copy_message(
+        chat_id,
+        from_chat_id=draft["from_chat_id"],
+        message_id=draft["message_id"],
+        reply_markup=preview_markup
+    )
+
+# post with buttons: func for parse buttons
+def parse_buttons_only(text: str):
+    matches = BUTTONS_BLOCK_RE.finditer(text)
+    rows = []
+    for m in matches:
+        buttons_in_block = BTN_RE.findall(m.group(2))
+        row = [
+            InlineKeyboardButton(text=btn_text.strip(), url=btn_url.strip())
+            for btn_url, btn_text in buttons_in_block
+        ]
+        if row:
+            rows.append(row)
+
+    if not rows:
+        return None
+
+    markup = InlineKeyboardMarkup()
+    for row in rows:
+        markup.row(*row)
+    return markup
 
 
 # new post handler - sign it and keep it clean

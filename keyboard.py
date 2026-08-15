@@ -45,3 +45,8 @@ start_menu.add(
     InlineKeyboardButton("Канал", url="https://t.me/ely4plugg", icon_custom_emoji_id=start_command_custom_emoji_menu_func("5395485801549176028")),
     InlineKeyboardButton("Чат", url="https://t.me/+LNYVSiGEVcJlMDFi", icon_custom_emoji_id=start_command_custom_emoji_menu_func("5395746905495999058"))
 )
+
+admin_menu = InlineKeyboardMarkup(row_width=1)
+admin_menu.add(
+    InlineKeyboardButton("Пост с кнопками", callback_data="admin_menu_post_buttons")
+)
