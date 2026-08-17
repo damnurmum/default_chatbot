@@ -1,0 +1,34 @@
+signs:
+  post:
+    text: |
+      <a href="https://t.me/ely4plugg">косим под эляплагг</a>
+  comment:
+    text: |
+      Пост был отправлен админом: [SIGN_ADMIN].
+      
+      t.me/ely4plugg
+    custom_emoji: False
+commands:
+  start:
+    text: | # <tg-emoji emoji-id=\"5427344232568368005\">?</tg-emoji>
+      Привет! Я - @default_chatbot. Бот, который создан для автоматизации <a href="https://t.me/ely4plugg">канала</a> и связанного с ним <a href="https://t.me/+LNYVSiGEVcJlMDFi">чата</a> обсуждений.
+
+      Буквально читаю тебе свои умения с репозитория...
+      <blockquote>Бот подписывает опубликованные посты именем администратора, добавляет инлайн-клавиатуру со ссылками в комментариях и наводит порядок в чате (открепление сообщений, удаление стикеров, дедупликация комментариев для медиа-альбомов).</blockquote>
+
+      Если ты сам захотел посмотреть на то, из чего я сделан - загляни на GitHub по кнопке ниже.
+
+      Спасибо, удачи!
+
+      by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
+    custom_emoji: False
+audit:
+  all:
+    enable: True
+  deletion:
+    enable: False
+files:
+  media_ids: 'media_ids.json'
+  audit:
+    session: "deletion_audit.session"
+    state: "deletion_audit_state.json"

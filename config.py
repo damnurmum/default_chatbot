@@ -3,45 +3,42 @@ from json import JSONDecodeError, load
 from os import getenv
 from pathlib import Path
 
+# read config.yaml lib
+import yaml
+
 # pull secrets from .env without leaking the sauce
 from dotenv import load_dotenv
 
+# load config.yaml file with all vars
+try:
+    with open("config.yaml", encoding="utf-8") as file:
+        yaml_config = yaml.safe_load(file)
+except yaml.scanner.ScannerError as error:
+    raise RuntimeError(f"invalid YAML in config.yaml") from error
+
 # absolute paths, so the bot works from any directory
 BASE_DIR = Path(__file__).resolve().parent
-MEDIA_IDS_PATH = BASE_DIR / "media_ids.json"
+MEDIA_IDS_PATH = BASE_DIR / yaml_config["files"]["media_ids"]
 
 # MTProto session and checkpoint files stay beside the bot code
-DELETION_AUDIT_MTPROTO = False
-DELETION_AUDIT_SESSION_PATH = BASE_DIR / "deletion_audit.session"
-DELETION_AUDIT_STATE_PATH = BASE_DIR / "deletion_audit_state.json"
+DELETION_AUDIT_MTPROTO = yaml_config["audit"]["deletion"]["enable"]
+DELETION_AUDIT_SESSION_PATH = BASE_DIR / yaml_config["files"]["audit"]["session"]
+DELETION_AUDIT_STATE_PATH = BASE_DIR / yaml_config["files"]["audit"]["state"]
 
 # post, comment signature templates;
 # placeholders: [SIGN_ADMIN] is where the artist signs
-POST_SIGN = (
-    "<a href=\"https://t.me/ely4plugg\">косим под эляплагг</a>"
-)
-COMMENT_SIGN = "Пост был отправлен админом: [SIGN_ADMIN].\n\nt.me/ely4plugg"
+POST_SIGN = yaml_config["signs"]["post"]["text"]
+COMMENT_SIGN = yaml_config["signs"]["comment"]["text"]
 
 # enable/disable tg channel audit for log chat
-AUDIT_FOR_LOG_CHAT = True
+AUDIT_FOR_LOG_CHAT = yaml_config["audit"]["all"]["enable"]
 
 # words shown when someone hits /start
-START_COMMAND_TEXT = """
-Привет! Я - @default_chatbot. Бот, который создан для автоматизации <a href="https://t.me/ely4plugg">канала</a> и связанного с ним <a href="https://t.me/+LNYVSiGEVcJlMDFi">чата</a> обсуждений.
-
-Буквально читаю тебе свои умения с репозитория...
-<blockquote>Бот подписывает опубликованные посты именем администратора, добавляет инлайн-клавиатуру со ссылками в комментариях и наводит порядок в чате (открепление сообщений, удаление стикеров, дедупликация комментариев для медиа-альбомов).</blockquote>
-
-Если ты сам захотел посмотреть на то, из чего я сделан - загляни на GitHub по кнопке ниже.
-
-Спасибо, удачи!
-
-by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
-""" # <tg-emoji emoji-id=\"5427344232568368005\">?</tg-emoji>
+START_COMMAND_TEXT = yaml_config["commands"]["start"]["text"]
 
 # premium emoji drip - works only when the bot owner has Telegram Premium
-START_COMMAND_CUSTOM_EMOJI_MENU = False
-COMMENT_CUSTOM_EMOJI_MENU = False
+START_COMMAND_CUSTOM_EMOJI_MENU = yaml_config["commands"]["start"]["custom_emoji"]
+COMMENT_CUSTOM_EMOJI_MENU = yaml_config["signs"]["comment"]["custom_emoji"]
 
 # reuse Telegram file IDs instead of uploading the same GIFs forever
 try:
