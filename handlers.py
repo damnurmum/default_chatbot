@@ -10,7 +10,7 @@ import re
 from bot_instance import bot
 
 # channel settings and media IDs - the secret sauce
-from config import CHAT, CHANNEL, POST_SIGN
+from config import CHAT, CHANNEL, POST_SIGN, COMMENT_SIGN
 from config import COMMENT_GIF, START_COMMAND_GIF
 from config import START_COMMAND_TEXT, ADMIN
 
@@ -59,7 +59,7 @@ def _text_for_comment(admin_sign: str | None) -> str:
         admin_sign = "АНОНИМ"
 
     # final caption ready for the discussion GIF
-    result = f"Пост был отправлен админом: {admin_sign}.\n\nt.me/ely4plugg"
+    result = COMMENT_SIGN.replace("[SIGN_ADMIN]", admin_sign)
     return result
 
 

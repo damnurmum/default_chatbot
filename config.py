@@ -15,11 +15,12 @@ DELETION_AUDIT_MTPROTO = False
 DELETION_AUDIT_SESSION_PATH = BASE_DIR / "deletion_audit.session"
 DELETION_AUDIT_STATE_PATH = BASE_DIR / "deletion_audit_state.json"
 
-# post signature template;
+# post, comment signature templates;
 # placeholders: [SIGN_ADMIN] is where the artist signs
 POST_SIGN = (
     "<a href=\"https://t.me/ely4plugg\">косим под эляплагг</a>"
 )
+COMMENT_SIGN = "Пост был отправлен админом: [SIGN_ADMIN].\n\nt.me/ely4plugg"
 
 # enable/disable tg channel audit for log chat
 AUDIT_FOR_LOG_CHAT = True
@@ -35,12 +36,12 @@ START_COMMAND_TEXT = """
 
 Спасибо, удачи!
 
-<tg-emoji emoji-id=\"5427344232568368005\">👺</tg-emoji> by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
-"""
+by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
+""" # <tg-emoji emoji-id=\"5427344232568368005\">?</tg-emoji>
 
 # premium emoji drip - works only when the bot owner has Telegram Premium
-START_COMMAND_CUSTOM_EMOJI_MENU = True
-COMMENT_CUSTOM_EMOJI_MENU = True
+START_COMMAND_CUSTOM_EMOJI_MENU = False
+COMMENT_CUSTOM_EMOJI_MENU = False
 
 # reuse Telegram file IDs instead of uploading the same GIFs forever
 try:
