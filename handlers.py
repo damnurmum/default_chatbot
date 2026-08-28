@@ -16,7 +16,11 @@ from config import START_COMMAND_TEXT, ADMIN
 
 # keyboards and tiny in-memory brain
 from keyboard import menu, start_menu, admin_menu
-from state import is_media_group_processed, set_post_sign, get_post_sign
+from state import (
+    get_post_sign,
+    is_media_group_processed,
+    set_post_sign,
+)
 
 
 # magic suffix that asks the bot to remove itself without adding a footer
@@ -61,6 +65,73 @@ def _text_for_comment(admin_sign: str | None) -> str:
     # final caption ready for the discussion GIF
     result = COMMENT_SIGN.replace("[SIGN_ADMIN]", admin_sign)
     return result
+
+
+# post author resolver - regular posts expose the channel admin signature
+def _channel_post_sign(message) -> str:
+    return message.author_signature or "АНОНИМ"
+
+
+# forward detector - Telegram does not allow bots to edit these channel posts
+def _is_forwarded_post(message) -> bool:
+    return any(
+        getattr(message, field, None) is not None
+        for field in (
+            "forward_origin",
+            "forward_date",
+            "forward_from",
+            "forward_from_chat",
+            "forward_sender_name",
+        )
+    )
+
+
+# origin message ID reader - modern replacement for forward_from_message_id
+def _forward_origin_message_id(forward_origin) -> int | None:
+    if getattr(forward_origin, "type", None) != "channel":
+        return None
+    return getattr(forward_origin, "message_id", None)
+
+
+# channel post ID resolver - supports both new and old Telegram fields
+def _forwarded_channel_post_id(message) -> int | None:
+    forward_origin = getattr(message, "forward_origin", None)
+    origin_message_id = _forward_origin_message_id(forward_origin)
+    return origin_message_id or getattr(message, "forward_from_message_id", None)
+
+
+# nested forward checker - forwarded posts get no discussion copy, zero noise
+def _is_forwarded_discussion_post(message) -> bool:
+    forward_origin = getattr(message, "forward_origin", None)
+    if forward_origin is not None:
+        if getattr(forward_origin, "type", None) != "channel":
+            return True
+
+        origin_chat = getattr(forward_origin, "chat", None)
+        return getattr(origin_chat, "id", None) != CHANNEL
+
+    # legacy fields still expose the original source on older updates
+    original_chat = getattr(message, "forward_from_chat", None)
+    if original_chat is not None:
+        return original_chat.id != CHANNEL
+
+    return any(
+        getattr(message, field, None) is not None
+        for field in ("forward_from", "forward_sender_name")
+    )
+
+
+# discussion source checker - accept only automatic posts from our channel
+def _is_channel_discussion_post(message) -> bool:
+    if not getattr(message, "is_automatic_forward", False):
+        return False
+
+    sender_chat = getattr(message, "sender_chat", None)
+    return (
+        sender_chat is not None
+        and sender_chat.id == CHANNEL
+        and sender_chat.type == "channel"
+    )
 
 
 # /start handler - enter with style
@@ -206,8 +277,12 @@ def handler_channel_post(message):
     if message.chat.id != CHANNEL:
         return
 
+    # forwarded posts keep the original Telegram header and skip all edits
+    if _is_forwarded_post(message):
+        return
+
     # post author cached for the future discussion reply
-    sign = message.author_signature or "АНОНИМ"
+    sign = _channel_post_sign(message)
     set_post_sign(message.id, sign)
 
     # touch only the shared album caption; Telegram gets weird otherwise
@@ -257,9 +332,12 @@ def handler_channel_post(message):
 def handler_send_message(message):
     if message.chat.id != CHAT:
         return
-    if not message.forward_from_chat:
+    if not _is_channel_discussion_post(message):
         return
-    if message.forward_from_chat.type != "channel":
+
+    # forwarded channel posts vanish from discussion before any bot comment
+    if _is_forwarded_discussion_post(message):
+        bot.delete_message(message.chat.id, message.id)
         return
 
     if message.content_type == "sticker":
@@ -270,8 +348,9 @@ def handler_send_message(message):
         if is_media_group_processed(message.media_group_id):
             return
 
-    # cached post author used in the automatic discussion reply
-    sign = get_post_sign(message.forward_from_message_id)
+    # cached author is ready instantly, no waiting in the discussion flow
+    channel_post_id = _forwarded_channel_post_id(message)
+    sign = get_post_sign(channel_post_id)
 
     bot.send_animation(
         message.chat.id,
