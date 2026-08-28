@@ -7,10 +7,10 @@ signs:
       Пост был отправлен админом: [SIGN_ADMIN].
       
       t.me/ely4plugg
-    custom_emoji: False
+    custom_emoji: True
 commands:
   start:
-    text: | # <tg-emoji emoji-id=\"5427344232568368005\">?</tg-emoji>
+    text: |
       Привет! Я - @default_chatbot. Бот, который создан для автоматизации <a href="https://t.me/ely4plugg">канала</a> и связанного с ним <a href="https://t.me/+LNYVSiGEVcJlMDFi">чата</a> обсуждений.
 
       Буквально читаю тебе свои умения с репозитория...
@@ -20,8 +20,8 @@ commands:
 
       Спасибо, удачи!
 
-      by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
-    custom_emoji: False
+      <tg-emoji emoji-id=\"5427344232568368005\">?</tg-emoji> by <a href="https://t.me/ely4plugg">ELY4PLUGG</a>.
+    custom_emoji: True
 audit:
   all:
     enable: True
